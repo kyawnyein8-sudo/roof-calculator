@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>အိမ်ခေါင်မိုး ဒိုင်းနှင့် အမိုးပြား အပြည့်အစုံ တွက်စက်</title>
+    <!-- PWA Links -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 20px;
+            padding: 0;
+        }
+        .calculator {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .roof-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .roof-type-item {
+            cursor: pointer;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px;
+            background: #fafafa;
+            transition: all 0.2s ease;
+        }
+        .roof-type-item:hover {
+            border-color: #007bff;
+        }
+        .roof-type-item.selected {
+            border-color: #007bff;
+            background-color: #eef6ff;
+        }
+        .roof-type-item svg {
+            width: 60px;
+            height: 40px;
+        }
+        .roof-type-item p {
+            margin: 3px 0 0 0;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .result p {
+            margin: 6px 0;
+            font-size: 15px;
+            color: #222;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        .diagram-container {
+            margin-top: 15px;
+            text-align: center;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .diagram-container svg {
+            width: 100%;
+            max-width: 520px;
+            height: auto;
+        }
+        .member-list {
+            margin-top: 15px;
+            background: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        .member-list ul {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+        }
+        .member-list li {
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h2>အိမ်ခေါင်မိုး ဒိုင်းနှင့် အမိုးပြား အပြည့်အစုံ တွက်စက်</h2>
+    
+    <label>ခေါင်မိုး ပုံစံ ရွေးပါ -</label>
+    <div class="roof-types">
+        <!-- ၁။ တစ်ဖက်စောင်း -->
+        <div class="roof-type-item selected" onclick="selectType('shed')" id="type-shed">
+            <svg viewBox="0 0 100 60">
+                <polygon points="10,45 90,20 90,45" fill="#007bff" opacity="0.3"/>
+                <line x1="10" y1="45" x2="90" y2="20" stroke="#007bff" stroke-width="4"/>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#333" stroke-width="2"/>
+                <line x1="90" y1="20" x2="90" y2="45" stroke="#333" stroke-width="2"/>
+            </svg>
+            <p>၁ ဖက်စောင်း (Shed)</p>
+        </div>
+
+        <!-- ၂။ နှစ်ဖက်စောင်း -->
+        <div class="roof-type-item" onclick="selectType('gable')" id="type-gable">
+            <svg viewBox="0 0 100 60">
+                <polygon points="10,45 50,15 90,45" fill="#007bff" opacity="0.3"/>
+                <line x1="10" y1="45" x2="50" y2="15" stroke="#007bff" stroke-width="4"/>
+                <line x1="50" y1="15" x2="90" y2="45" stroke="#007bff" stroke-width="4"/>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#333" stroke-width="2"/>
+            </svg>
+            <p>၂ ဖက်စောင်း (Gable)</p>
+        </div>
+
+        <!-- ၃။ ၄ ဖက်စောင်း (Pyramid) -->
+        <div class="roof-type-item" onclick="selectType('pyramid')" id="type-pyramid">
+            <svg viewBox="0 0 100 60">
+                <polygon points="10,45 50,15 90,45" fill="#007bff" opacity="0.2"/>
+                <line x1="10" y1="45" x2="50" y2="15" stroke="#007bff" stroke-width="3"/>
+                <line x1="90" y1="45" x2="50" y2="15" stroke="#007bff" stroke-width="3"/>
+                <line x1="50" y1="45" x2="50" y2="15" stroke="#007bff" stroke-width="2" stroke-dasharray="3,3"/>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#333" stroke-width="2"/>
+            </svg>
+            <p>၄ ဖက်စောင်း (Pyramid)</p>
+        </div>
+
+        <!-- ၄။ ၄ ဖက်စောင်း ခေါင်တန်းပါ (Hip Roof) -->
+        <div class="roof-type-item" onclick="selectType('hip')" id="type-hip">
+            <svg viewBox="0 0 100 60">
+                <polygon points="10,45 30,20 70,20 90,45" fill="#007bff" opacity="0.2"/>
+                <line x1="30" y1="20" x2="70" y2="20" stroke="#007bff" stroke-width="4"/>
+                <line x1="10" y1="45" x2="30" y2="20" stroke="#007bff" stroke-width="3"/>
+                <line x1="90" y1="45" x2="70" y2="20" stroke="#007bff" stroke-width="3"/>
+                <line x1="10" y1="45" x2="90" y2="45" stroke="#333" stroke-width="2"/>
+            </svg>
+            <p>၄ ဖက် ခေါင်တန်းပါ (Hip)</p>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="form-group">
+            <label for="span">ခန်းဖွင့် အကျယ် - Span (ပေ) -</label>
+            <input type="number" id="span" placeholder="ဥပမာ - 15" step="any">
+        </div>
+        <div class="form-group">
+            <label for="length">အိမ်အလျား - Building Length (ပေ) -</label>
+            <input type="number" id="length" placeholder="ဥပမာ - 30" step="any">
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="form-group">
+            <label for="pitchRate">၁ ပေလျှင် မြင့်တက်လာမည့် လက်မ (Pitch) -</label>
+            <input type="number" id="pitchRate" value="4" step="any">
+        </div>
+        <div class="form-group">
+            <label for="overhang">အစွန်း ပိုထွက်မည့် အလျား (ပေ) -</label>
+            <input type="number" id="overhang" value="1.5" step="any">
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="form-group">
+            <label for="trussSpacing">ဒိုင်း ခွေမည့် အကွာအဝေး (ပေ) -</label>
+            <input type="number" id="trussSpacing" value="8" step="any">
+        </div>
+        <div class="form-group">
+            <label for="purlinSpacing">မြောင်းတန်း အကွာအဝေး (ပေ) -</label>
+            <input type="number" id="purlinSpacing" value="2.5" step="any">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="sheetWidth">သွပ်ပြား/အမိုးပြား ၁ ချောင်း၏ အကျယ် (ပေ) -</label>
+        <input type="number" id="sheetWidth" value="3" step="any">
+    </div>
+
+    <button onclick="calculateRoof()">တွက်ချက်မည်</button>
+
+    <div class="result" id="resultArea" style="display:none;">
+        <p><strong>ခေါင်အမြင့် (Rise):</strong> <span id="roofHeight" class="highlight"></span> ပေ</p>
+        <p><strong>မိုးစောင်းအလျား - အစွန်းပါ (Rafter Length):</strong> <span id="totalRafter" class="highlight"></span> ပေ</p>
+        <p><strong>စုစုပေါင်း အမိုးဧရိယာ (Roof Area):</strong> <span id="roofArea" class="highlight"></span> စတုရန်းပေ (Sq.ft)</p>
+        <p><strong>ဒိုင်းခွေ အရေအတွက် (Total Trusses):</strong> <span id="totalTrusses" class="highlight"></span> ခွေ</p>
+        <p><strong>မြောင်းတန်း အတန်း အရေအတွက် (Purlin Lines):</strong> <span id="purlinCount" class="highlight"></span> တန်း</p>
+        <p><strong>သွပ်ပြား / အမိုးပြား စုစုပေါင်း အရေအတွက်:</strong> <span id="totalSheets" class="highlight"></span> ချောင်း</p>
+
+        <!-- ဒိုင်း တိုင် / အဖွဲ့ဝင် (Members) များ စာရင်း -->
+        <div class="member-list" id="memberList"></div>
+
+        <!-- 3D/Isometric House Structure Diagram with Trusses -->
+        <div class="diagram-container" id="diagramContainer"></div>
+    </div>
+</div>
+
+<script>
+    let selectedType = 'shed';
+
+    function selectType(type) {
+        selectedType = type;
+        document.querySelectorAll('.roof-type-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        document.getElementById('type-' + type).classList.add('selected');
+    }
+
+    function calculateRoof() {
+        const span = parseFloat(document.getElementById('span').value);
+        const length = parseFloat(document.getElementById('length').value);
+        const pitchRate = parseFloat(document.getElementById('pitchRate').value);
+        const overhang = parseFloat(document.getElementById('overhang').value) || 0;
+        const trussSpacing = parseFloat(document.getElementById('trussSpacing').value) || 8;
+        const purlinSpacing = parseFloat(document.getElementById('purlinSpacing').value) || 2.5;
+        const sheetWidth = parseFloat(document.getElementById('sheetWidth').value) || 3;
+
+        if (isNaN(span) || span <= 0 || isNaN(length) || length <= 0 || isNaN(pitchRate) || pitchRate < 0) {
+            alert("ကျေးဇူးပြု၍ ခန်းဖွင့်အကျယ်၊ အိမ်အလျားနှင့် Pitch တို့ကို မှန်ကန်စွာ ထည့်သွင်းပါ။");
+            return;
+        }
+
+        let runLength = span;
+        if (selectedType === 'gable' || selectedType === 'pyramid' || selectedType === 'hip') {
+            runLength = span / 2;
+        }
+
+        // ၁။ ခေါင်အမြင့်
+        const heightInFeet = (runLength * pitchRate) / 12;
+
+        // ၂။ မိုးစောင်းအလျား (အစွန်းပါ)
+        const baseRafter = Math.sqrt(Math.pow(runLength, 2) + Math.pow(heightInFeet, 2));
+        const totalRafterLength = baseRafter + overhang;
+
+        // ၃။ ဒိုင်းခွေ အရေအတွက်
+        const totalTrusses = Math.ceil(length / trussSpacing) + 1;
+
+        // ၄။ စုစုပေါင်း အမိုးဧရိယာ
+        let totalRoofArea = 0;
+        if (selectedType === 'shed') {
+            totalRoofArea = totalRafterLength * (length + (overhang * 2));
+        } else {
+            totalRoofArea = totalRafterLength * (length + (overhang * 2)) * 2;
+        }
+
+        // ၅။ မြောင်းတန်း အတန်း အရေအတွက်
+        let purlinLinesPerSide = Math.ceil(totalRafterLength / purlinSpacing) + 1;
+        let totalPurlinLines = selectedType === 'shed' ? purlinLinesPerSide : purlinLinesPerSide * 2;
+
+        // ၆။ သွပ်ပြား အရေအတွက်
+        let sheetsAcrossLength = Math.ceil((length + (overhang * 2)) / sheetWidth);
+        let totalSheets = selectedType === 'shed' ? sheetsAcrossLength : sheetsAcrossLength * 2;
+
+        // စာသားများ ပြသခြင်း
+        document.getElementById('roofHeight').innerText = heightInFeet.toFixed(2);
+        document.getElementById('totalRafter').innerText = totalRafterLength.toFixed(2);
+        document.getElementById('roofArea').innerText = totalRoofArea.toFixed(2);
+        document.getElementById('totalTrusses').innerText = totalTrusses;
+        document.getElementById('purlinCount').innerText = totalPurlinLines;
+        document.getElementById('totalSheets').innerText = totalSheets;
+
+        const heightTxt = heightInFeet.toFixed(2) + " ပေ";
+        const rafterTxt = totalRafterLength.toFixed(2) + " ပေ";
+        const spanTxt = span.toFixed(2) + " ပေ";
+
+        // Members Description List
+        const memberDiv = document.getElementById('memberList');
+        if (selectedType === 'shed') {
+            memberDiv.innerHTML = `
+                <strong>ဒိုင်းခွေမည့် Members စာရင်း (ဒိုင်း ၁ ခွေစာ) -</strong>
+                <ul>
+                    <li><strong style="color:#d9534f">Rafter (မိုးစောင်းတန်း):</strong> ${rafterTxt} (၁ ချောင်း)</li>
+                    <li><strong style="color:#28a745">Bottom Chord (အောက်တန်း):</strong> ${spanTxt} (၁ ချောင်း)</li>
+                    <li><strong style="color:#007bff">King Post (ဒေါင်လိုက်တိုင်):</strong> ${heightTxt} (၁ ချောင်း)</li>
+                    <li><strong style="color:#6f42c1">Purlin (မြောင်းတန်း):</strong> အလျား ${length} ပေရှိ အတန်း ${totalPurlinLines} တန်း</li>
+                </ul>
+            `;
+        } else {
+            memberDiv.innerHTML = `
+                <strong>ဒိုင်းခွေမည့် Members စာရင်း (နှစ်ဖက်စောင်း ဒိုင်း ၁ ခွေစာ) -</strong>
+                <ul>
+                    <li><strong style="color:#d9534f">Rafter (မိုးစောင်းတန်း):</strong> ${rafterTxt} × ၂ ချောင်း = ${(totalRafterLength * 2).toFixed(2)} ပေ</li>
+                    <li><strong style="color:#28a745">Bottom Chord (အောက်တန်း):</strong> ${spanTxt} (၁ ချောင်း)</li>
+                    <li><strong style="color:#007bff">King Post (အလယ်ခေါင်တိုင်):</strong> ${heightTxt} (၁ ချောင်း)</li>
+                    <li><strong style="color:#17a2b8">Ridge Beam (ခေါင်တန်း):</strong> အလျား ${length} ပေ (၁ ချောင်း)</li>
+                    <li><strong style="color:#6f42c1">Purlin (မြောင်းတန်း):</strong> အလျား ${length} ပေရှိ အတန်း ${totalPurlinLines} တန်း</li>
+                </ul>
+            `;
+        }
+
+        // Draw House Structure with Roof Trusses & Members (3D Perspective View)
+        const diagramDiv = document.getElementById('diagramContainer');
+        diagramDiv.innerHTML = `
+            <svg viewBox="0 0 450 260">
+                <!-- House Wall Box -->
+                <polygon points="50,150 200,150 200,230 50,230" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+                <polygon points="200,150 380,110 380,180 200,230" fill="#e9ecef" stroke="#6c757d" stroke-width="2"/>
+                
+                <!-- Door & Window -->
+                <rect x="100" y="180" width="30" height="50" fill="#d0d7de" stroke="#6c757d"/>
+                <rect x="250" y="150" width="40" height="30" fill="#d0d7de" stroke="#6c757d"/>
+
+                <!-- FRONT TRUSS -->
+                <line x1="50" y1="150" x2="200" y2="150" stroke="#28a745" stroke-width="3"/>
+                <line x1="50" y1="150" x2="125" y2="80" stroke="#d9534f" stroke-width="3"/>
+                <line x1="200" y1="150" x2="125" y2="80" stroke="#d9534f" stroke-width="3"/>
+                <line x1="125" y1="150" x2="125" y2="80" stroke="#007bff" stroke-width="2"/>
+                <line x1="87" y1="150" x2="125" y2="80" stroke="#ffc107" stroke-width="1.5"/>
+                <line x1="162" y1="150" x2="125" y2="80" stroke="#ffc107" stroke-width="1.5"/>
+
+                <!-- BACK TRUSS -->
+                <line x1="230" y1="110" x2="380" y2="110" stroke="#28a745" stroke-width="2" stroke-dasharray="3,3"/>
+                <line x1="230" y1="110" x2="305" y2="40" stroke="#d9534f" stroke-width="2"/>
+                <line x1="380" y1="110" x2="305" y2="40" stroke="#d9534f" stroke-width="2"/>
+                <line x1="305" y1="110" x2="305" y2="40" stroke="#007bff" stroke-width="2" stroke-dasharray="3,3"/>
+
+                <!-- LONGITUDINAL MEMBERS -->
+                <line x1="125" y1="80" x2="305" y2="40" stroke="#17a2b8" stroke-width="3"/>
+                <line x1="87" y1="115" x2="267" y2="75" stroke="#6f42c1" stroke-width="2"/>
+                <line x1="162" y1="115" x2="342" y2="75" stroke="#6f42c1" stroke-width="2"/>
+                <line x1="50" y1="150" x2="230" y2="110" stroke="#6f42c1" stroke-width="2"/>
+                <line x1="200" y1="150" x2="380" y2="110" stroke="#6f42c1" stroke-width="2"/>
+
+                <!-- Annotations -->
+                <text x="315" y="35" fill="#17a2b8" font-weight="bold" font-size="11">Ridge Beam (ခေါင်တန်း)</text>
+                <text x="275" y="70" fill="#6f42c1" font-weight="bold" font-size="11">Purlin (မြောင်းတန်း)</text>
+                <text x="20" y="110" fill="#d9534f" font-weight="bold" font-size="11">Rafter (${rafterTxt})</text>
+                <text x="130" y="115" fill="#007bff" font-weight="bold" font-size="11">Rise (${heightTxt})</text>
+                <text x="100" y="165" fill="#28a745" font-weight="bold" font-size="11">Span (${spanTxt})</text>
+            </svg>
+        `;
+
+        document.getElementById('resultArea').style.display = 'block';
+    }
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((reg) => console.log('Service Worker Registered!', reg))
+                .catch((err) => console.log('Service Worker Registration Failed:', err));
+        });
+    }
+</script>
+
+</body>
+</html>
